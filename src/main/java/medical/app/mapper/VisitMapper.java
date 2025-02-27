@@ -3,7 +3,6 @@ package medical.app.mapper;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import medical.app.config.MapperConfig;
