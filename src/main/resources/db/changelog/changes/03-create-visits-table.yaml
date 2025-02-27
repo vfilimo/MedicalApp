@@ -1,0 +1,41 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-visits-table
+      author: vfilimo
+      changes:
+        - createTable:
+            tableName: visits
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: start_date_time
+                  type: datetime
+              - column:
+                  name: end_date_time
+                  type: datetime
+              - column:
+                  name: doctor_id
+                  type: int
+              - column:
+                  name: patient_id
+                  type: int
+
+        - addForeignKeyConstraint:
+            baseTableName: visits
+            baseColumnNames: doctor_id
+            constraintName: fk_visit_doctor
+            referencedTableName: doctors
+            referencedColumnNames: id
+
+        - addForeignKeyConstraint:
+            baseTableName: visits
+            baseColumnNames: patient_id
+            constraintName: fk_visit_patient
+            referencedTableName: patients
+            referencedColumnNames: id

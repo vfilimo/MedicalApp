@@ -1,0 +1,50 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-patients
+      author: vfilimo
+      changes:
+        - insert:
+            tableName: patients
+            columns:
+              - column:
+                  name: first_name
+                  value: Alice
+              - column:
+                  name: last_name
+                  value: Brown
+        - insert:
+            tableName: patients
+            columns:
+              - column:
+                  name: first_name
+                  value: Bob
+              - column:
+                  name: last_name
+                  value: Smith
+        - insert:
+            tableName: patients
+            columns:
+              - column:
+                  name: first_name
+                  value: Carol
+              - column:
+                  name: last_name
+                  value: Johnson
+        - insert:
+            tableName: patients
+            columns:
+              - column:
+                  name: first_name
+                  value: David
+              - column:
+                  name: last_name
+                  value: Williams
+        - insert:
+            tableName: patients
+            columns:
+              - column:
+                  name: first_name
+                  value: Emma
+              - column:
+                  name: last_name
+                  value: Davis

@@ -1,0 +1,31 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-doctors-table
+      author: vfilimo
+      changes:
+        - createTable:
+            tableName: doctors
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: first_name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: time_zone
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+                    unique: true
