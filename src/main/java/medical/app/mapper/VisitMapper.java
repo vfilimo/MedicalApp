@@ -43,20 +43,11 @@ public interface VisitMapper {
     @Named("toVisitDto")
     VisitDto toVisitDto(Visit visit, @Context Map<Integer, Long> doctorsPatientsMap);
 
-    List<VisitDto> toVisitDto(List<Visit> visit);
-
     @Named("toDoctorTime")
     default LocalDateTime convertToTimeZone(LocalDateTime localDateTime, @Context ZoneId zoneId) {
         ZoneId userZone = ZoneId.systemDefault();
         ZonedDateTime userZonedDateTime = localDateTime.atZone(userZone);
         ZonedDateTime doctorZonedDateTime = userZonedDateTime.withZoneSameInstant(zoneId);
         return doctorZonedDateTime.toLocalDateTime();
-    }
-
-    default Visit getPreviousVisit(Visit visit, Map<Long, List<Visit>> visitsByDoctor) {
-        return visitsByDoctor.getOrDefault(visit.getDoctor().getId(), List.of()).stream()
-                .filter(v -> v.getStartDateTime().isBefore(visit.getStartDateTime()))
-                .max(Comparator.comparing(Visit::getStartDateTime))
-                .orElse(null);
     }
 }

@@ -31,12 +31,13 @@ public class VisitServiceImpl implements VisitService {
     private final DoctorRepository doctorRepository;
     private final VisitMapper visitMapper;
 
+    @Override
     public CreateVisitDto createNewVisit(CreateVisitDto createVisitDto) {
         Doctor doctor = getDoctorFromDb(createVisitDto);
         Visit newVisit = visitMapper.toEntity(createVisitDto, ZoneId.of(doctor.getTimeZone()));
-        boolean isValid = visitRepository.findNextVisitForDoctor(createVisitDto.getDoctorId(),
-                newVisit.getStartDateTime(), newVisit.getEndDateTime()).isEmpty();
-        if (!isValid) {
+        if (!dateValidation(createVisitDto)) {
+            throw new ValidationException("The start date cannot be later than the end date.");
+        } else if (!isValidVisit(createVisitDto, newVisit)) {
             throw new ValidationException(String.format(
                     "The doctor already has an appointment scheduled from %s to %s.",
                     createVisitDto.getStart(), createVisitDto.getEnd()));
@@ -56,13 +57,13 @@ public class VisitServiceImpl implements VisitService {
                 .map(v -> v.getDoctor().getId())
                 .distinct()
                 .toList();
-        Map<Integer, Long> doctorTotalPatientMap = getDoctorIdTotalPatientMap(doctorIds);
+        Map<Integer, Long> doctorTotalPatientMap = getDoctorTotalPatients(doctorIds);
         List<ResponseVisitDto> responseVisitDtoList = visitMapper
                 .toResponseVisitDtoList(visitsBySearchParameters.toList(), doctorTotalPatientMap);
         return new ResponseList(responseVisitDtoList, visitsBySearchParameters.getTotalElements());
     }
 
-    private Map<Integer, Long> getDoctorIdTotalPatientMap(List<Integer> doctorIds) {
+    private Map<Integer, Long> getDoctorTotalPatients(List<Integer> doctorIds) {
         return doctorRepository.findDoctorsWithPatientCount(doctorIds)
                 .stream()
                 .collect(Collectors.toMap(
@@ -76,5 +77,15 @@ public class VisitServiceImpl implements VisitService {
                         "Doctor with ID %d is not found in the database.",
                         createVisitDto.getDoctorId())));
         return doctor;
+    }
+
+    private boolean isValidVisit(CreateVisitDto createVisitDto, Visit newVisit) {
+        boolean isValid = visitRepository.findNextVisitForDoctor(createVisitDto.getDoctorId(),
+                newVisit.getStartDateTime(), newVisit.getEndDateTime()).isEmpty();
+        return isValid;
+    }
+
+    private boolean dateValidation(CreateVisitDto createVisitDto) {
+        return createVisitDto.getStart().isBefore(createVisitDto.getEnd());
     }
 }
